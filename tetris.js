@@ -109,15 +109,19 @@ document.addEventListener('keydown', keyPressed)
 function keyPressed(e) {
 	switch(e.code) {
 		case "KeyA":
+		case "ArrowLeft":
 			moveLeft()
 			break
 		case "KeyD":
+		case "ArrowRight":
 			moveRight()
 			break
 		case "KeyS":
+		case "ArrowDown":
 			drop()
 			break
 		case "KeyQ":
+		case "ArrowUp":
 			rotateCCW()
 			break
 		case "KeyE":
@@ -295,7 +299,7 @@ function clearRows(start = (ROWS-1)) {
 */
 
 function clearRows() {
-	let rowsToClear = []
+	let rowsToClear = [] // [19, 18, 17, 16]
 	for(let r = ROWS - 1; r >= 0; --r) {
 		if(!board[r].includes(0)) {
 			rowsToClear.push(r)
@@ -305,7 +309,7 @@ function clearRows() {
 	
 	if(rowsToClear) {
 		for(let r = rowsToClear[0]; r > rowsToClear.length - 1; --r) {
-			board[r] = board[r - rowsToClear.length]
+			board[r] = board[r - rowsToClear.length].slice()
 		}
 		for(let r = 0; r < rowsToClear.length; ++r) {
 			board[r].fill(0)
@@ -340,18 +344,18 @@ const draw = () => {
 	
 	if (cv.getContext) {
 		var ctx = cv.getContext('2d');
-				
+
 		const drawBoard = () => {
+			ctx.fillStyle = "black"
+			ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
 			for(let r = 0; r < ROWS; ++r) {
 				for(let c = 0; c < COLS; ++c) {
 					if(board[r][c]) {
 						ctx.fillStyle = board[r][c]
-					} else {
-						ctx.fillStyle = "black"
+						ctx.fillRect(c * SQUARE_WIDTH, r * SQUARE_HEIGHT, SQUARE_WIDTH, SQUARE_HEIGHT)
+						ctx.strokeStyle = "rgba(0,0,0,0.5)"
+						ctx.strokeRect(c * SQUARE_WIDTH, r * SQUARE_HEIGHT, SQUARE_WIDTH, SQUARE_HEIGHT)
 					}
-					ctx.fillRect(c * SQUARE_WIDTH, r * SQUARE_HEIGHT, SQUARE_WIDTH, SQUARE_HEIGHT)
-					ctx.strokeStyle = "rgba(0,0,0,0.5)"
-					ctx.strokeRect(c * SQUARE_WIDTH, r * SQUARE_HEIGHT, SQUARE_WIDTH, SQUARE_HEIGHT)
 				}
 			}
 		}
@@ -368,9 +372,6 @@ const draw = () => {
 				}
 			}				
 		}
-		
-		ctx.fillStyle = "black"
-		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
 			
 		drawBoard()
 		drawCurrentPiece()
